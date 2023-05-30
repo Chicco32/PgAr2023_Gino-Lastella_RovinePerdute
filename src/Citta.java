@@ -38,12 +38,17 @@ public class Citta {
         return this.h;
     }
 
-    public boolean raggiunge(String id) {
-        return this.link.contains(id);
+    public List<String> getLink() {
+        return this.link;
     }
 
     @Override
     public boolean equals(Object obj) {
         return ((Citta)obj).getId() == this.getId();
+    }
+
+    @Override
+    public String toString() {
+        return this.id + " " + this.nome;
     }
 }

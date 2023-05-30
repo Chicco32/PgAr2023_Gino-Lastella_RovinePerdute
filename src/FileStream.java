@@ -1,12 +1,19 @@
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 public class FileStream {
+
+    public static final String FILE_OUTPUT = "output/Routes.xml";
     
     private static XMLStreamReader inizializzaReader(String nomeFile) {
 		try {
@@ -16,6 +23,19 @@ public class FileStream {
 			return xmlr;
 		}
 		catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return null;
+	}
+
+    private static XMLStreamWriter inizializzaWriter(String nomeOutput) {
+		try {
+			XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+			XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(new FileOutputStream(nomeOutput), "utf-8");
+			xmlw.writeStartDocument("utf-8", "1.0");
+            return xmlw;
+		} 
+		catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 		return null;
@@ -48,6 +68,7 @@ public class FileStream {
                         if(xmlr.getLocalName().equals("city")) {
                             Citta nuovaCitta = new Citta(id, nome, x, y, h, link);
                             citta.add(nuovaCitta);
+                            link = new ArrayList<>();
                         }
                     break;
                 }
@@ -58,5 +79,31 @@ public class FileStream {
             System.out.println(e.getMessage());
         }
         return citta;
+    }
+
+    public static void scriviOutput(String fileOutput, Squadra squadra1, Squadra squadra2) {
+        XMLStreamWriter xmlw = inizializzaWriter(fileOutput);
+        try {
+            scriviSquadra(xmlw, squadra1);
+            scriviSquadra(xmlw, squadra2);
+            xmlw.writeEndDocument();
+            xmlw.flush();
+            xmlw.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void scriviSquadra(XMLStreamWriter xmlw, Squadra squadra) throws XMLStreamException{
+        xmlw.writeStartElement("routes");
+        xmlw.writeAttribute("team", squadra.getNome());
+        xmlw.writeAttribute("cost", String.valueOf(squadra.getCosto()));
+        xmlw.writeAttribute("cities", String.valueOf(squadra.getPercorso().size()));
+        for (Citta citta : squadra.getPercorso()) {
+            xmlw.writeEmptyElement("city");
+            xmlw.writeAttribute("id", citta.getId());
+            xmlw.writeAttribute("name", citta.getNome());
+        }
+        xmlw.writeEndElement();
     }
 }
