@@ -7,7 +7,8 @@ public class MappaMetztli extends AbstractMappa {
     }
 
     @Override
-    protected float calcolaDistanza(Citta citta1, Citta citta2) {
+    protected float calcolaConsumo(Citta citta1, Citta citta2) {
+        //Il consumo è pari alla differenza di altitudine tra le due città
         return Math.abs(citta1.getH() - citta2.getH());
     }
 }

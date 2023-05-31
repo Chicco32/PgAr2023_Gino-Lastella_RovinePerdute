@@ -19,7 +19,7 @@ public class AStar {
 
         Set<Citta> close = new HashSet<Citta>();
         Nodo nodoCorrente = null;
-        // finche ho città da visitare, continua l'algoritmo
+        // finché ho città da visitare, continua l'algoritmo
         while(!frontiera.isEmpty()) {
 
             //estraggo la citta alla quale costa di meno arrivare

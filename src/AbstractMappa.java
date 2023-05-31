@@ -1,6 +1,9 @@
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Calcola e contiene i parametri per eseguire l'algoritmo di pathfinding
+ */
 public abstract class AbstractMappa {
     
     private Map<String, Citta> citta;
@@ -33,21 +36,34 @@ public abstract class AbstractMappa {
         return arrivo;
     }
 
+    /**
+     * Genera una mappa contenente tutte le città, ad ogni città corrisponde una mappa che contiene
+     * tutte le città ad essa collegate e il carburante consumato per arrivarci
+     */
     private void creaGrafoStati() {
         this.grafoStati = new HashMap<>();
         for (Citta citta : this.citta.values()) {
             Map<Citta, Float> connessioni = new HashMap<>();
             for (String idCittaAdiacente : citta.getLink()) {
                 Citta adiacente = this.citta.get(idCittaAdiacente);
-                float distanza = this.calcolaDistanza(citta, adiacente);
+                float distanza = this.calcolaConsumo(citta, adiacente);
                 connessioni.put(adiacente, distanza);
             }
             this.grafoStati.put(citta, connessioni);
         }
     }
-    
-    protected abstract float calcolaDistanza(Citta citta1, Citta citta2);
+    /**
+     * Calcola il consumo di carburante per lo spostamento tra 2 città secondo diversi criteri
+     * @param citta1
+     * @param citta2
+     * @return Il carburante consumato
+     */
+    protected abstract float calcolaConsumo(Citta citta1, Citta citta2);
 
+    /**
+     * Genera una mappa contenente tutte le città, ad ogni città corrisponde la distanza 
+     * in linea d'aria con l'arrivo
+     */
     private void creaFunzioneEuristica() {
         this.euristica = new HashMap<>();
         for (Citta citta : this.citta.values()) {
